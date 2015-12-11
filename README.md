@@ -11,7 +11,7 @@ Example usage:
 
 ```shell
 $ ls
-Procfile Project.swift Sources
+Procfile Package.swift Sources
 
 $ heroku create --buildpack https://github.com/kylef/heroku-buildpack-swift.git
 

@@ -7,7 +7,7 @@ set -o pipefail
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-DEFAULT_SWIFT_VERSION="swift-2.2-SNAPSHOT-2015-12-01-b"
+DEFAULT_SWIFT_VERSION="swift-2.2-SNAPSHOT-2015-12-22-a"
 CLANG_VERSION=3.7.0
 
 if [ -f $BUILD_DIR/.swift-version ]; then

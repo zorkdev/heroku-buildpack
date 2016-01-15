@@ -7,11 +7,11 @@ set -o pipefail
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-DEFAULT_SWIFT_VERSION="swift-2.2-SNAPSHOT-2015-12-22-a"
+DEFAULT_SWIFT_VERSION="2.2-SNAPSHOT-2015-12-22-a"
 CLANG_VERSION=3.7.0
 
 if [ -f $BUILD_DIR/.swift-version ]; then
-  SWIFT_VERSION=$(cat $BUILD_DIR/.swift-version)
+  SWIFT_VERSION=$(cat "$BUILD_DIR/.swift-version" | sed -e "s/swift-//")
 else
   SWIFT_VERSION=$DEFAULT_SWIFT_VERSION
 fi
@@ -25,7 +25,7 @@ if [[ ! -d "$SWIFT_DIR/$SWIFT_VERSION" ]]; then
   cd $SWIFT_DIR
   echo "-----> Installing $SWIFT_VERSION"
   mkdir -p $SWIFT_VERSION
-  curl https://swift.org/builds/ubuntu1404/$SWIFT_VERSION/$SWIFT_VERSION-ubuntu14.04.tar.gz -s | tar xz -C $SWIFT_VERSION &> /dev/null
+  curl https://swift.org/builds/ubuntu1404/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04.tar.gz -s | tar xz -C swift-$SWIFT_VERSION &> /dev/null
 fi
 
 if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
@@ -35,7 +35,7 @@ if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
   curl http://llvm.org/releases/$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz -s | xz -d -c | tar x -C clang-$CLANG_VERSION &> /dev/null
 fi
 
-export PATH="$SWIFT_DIR/$SWIFT_VERSION/$SWIFT_VERSION-ubuntu14.04/usr/bin:$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
+export PATH="$SWIFT_DIR/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04/usr/bin:$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
 
 cd $BUILD_DIR
 echo "-----> Building Package"
@@ -44,7 +44,7 @@ swift build --configuration release
 # These should be statically linked, seems a swift bug
 echo "-----> Copying dynamic libraries"
 mkdir -p $BUILD_DIR/.swift-lib
-cp $SWIFT_DIR/$SWIFT_VERSION/$SWIFT_VERSION-ubuntu14.04/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
+cp $SWIFT_DIR/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
 
 echo "-----> Copying binaries to 'bin'"
 mkdir -p $BUILD_DIR/.swift-bin

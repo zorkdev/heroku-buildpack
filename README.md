@@ -48,8 +48,11 @@ in your repository:
 
 ```shell
 $ cat .swift-version
-swift-2.2-SNAPSHOT-2015-12-01-b
+2.2-SNAPSHOT-2015-12-01-b
 ```
+
+The `.swift-version` file is completely compatible with
+[swiftenv](http://github.com/kylef/swiftenv).
 
 **NOTE**: *Since there are frequent Swift language changes, it's advised that
 you pin to your Swift version.*

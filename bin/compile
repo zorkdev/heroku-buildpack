@@ -24,7 +24,7 @@ mkdir -p $SWIFT_DIR
 if [[ ! -d "$SWIFT_DIR/$SWIFT_VERSION" ]]; then
   cd $SWIFT_DIR
   echo "-----> Installing $SWIFT_VERSION"
-  mkdir -p $SWIFT_VERSION
+  mkdir -p swift-$SWIFT_VERSION
   curl https://swift.org/builds/ubuntu1404/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04.tar.gz -s | tar xz -C swift-$SWIFT_VERSION &> /dev/null
 fi
 

@@ -17,7 +17,7 @@ else
   SWIFT_VERSION=$DEFAULT_SWIFT_VERSION
 fi
 
-source "$BINDIR/steps/hooks/pre_compile"
+source "$BIN_DIR/steps/hooks/pre_compile"
 
 mkdir -p $CACHE_DIR
 
@@ -62,4 +62,4 @@ set-env() {
 set-env PATH '$HOME/.swift-bin:$PATH'
 set-env LD_LIBRARY_PATH '$HOME/.swift-lib'
 
-source "$BINDIR/steps/hooks/post_compile"
+source "$BIN_DIR/steps/hooks/post_compile"

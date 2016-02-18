@@ -5,30 +5,38 @@ set -e
 set -o pipefail
 
 BIN_DIR=$(cd $(dirname $0); pwd)
+ROOT_DIR=$(dirname $BIN_DIR)
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 
 DEFAULT_SWIFT_VERSION="2.2-SNAPSHOT-2015-12-22-a"
 CLANG_VERSION=3.7.0
 
-if [ -f $BUILD_DIR/.swift-version ]; then
-  SWIFT_VERSION=$(cat "$BUILD_DIR/.swift-version" | sed -e "s/swift-//")
-else
-  SWIFT_VERSION=$DEFAULT_SWIFT_VERSION
+mkdir -p "$CACHE_DIR"
+
+# Fetch swiftenv
+git submodule update --init --recursive >/dev/null
+
+# Activate swiftenv
+export SWIFTENV_ROOT="$CACHE_DIR/swiftenv"
+export PATH="$ROOT_DIR/swiftenv/bin:$PATH"
+eval "$(swiftenv init -)"
+
+if ! [ -f "$BUILD_DIR/.swift-version" ] && [ -z "$SWIFT_VERSION" ]; then
+  export SWIFT_VERSION="$DEFAULT_SWIFT_VERSION"
 fi
 
+# Pre compile hook
 source "$BIN_DIR/steps/hooks/pre_compile"
 
-mkdir -p $CACHE_DIR
-
-SWIFT_DIR=$BUILD_DIR/.swift
-mkdir -p $SWIFT_DIR
-
-if [[ ! -d "$SWIFT_DIR/$SWIFT_VERSION" ]]; then
-  cd $SWIFT_DIR
-  echo "-----> Installing $SWIFT_VERSION"
-  mkdir -p swift-$SWIFT_VERSION
-  curl https://swift.org/builds/ubuntu1404/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04.tar.gz -s | tar xz -C swift-$SWIFT_VERSION &> /dev/null
+# Install Swift
+cd "$BUILD_DIR"
+SWIFT_PREFIX="$(swiftenv prefix || true)"
+if ! [ -d "$SWIFT_PREFIX" ]; then
+  VERSION="$(env DONT_CHECK=true swiftenv version-name)"
+  echo "-----> Installing $VERSION"
+  swiftenv install
 fi
 
 if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
@@ -38,7 +46,7 @@ if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
   curl http://llvm.org/releases/$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz -s | xz -d -c | tar x -C clang-$CLANG_VERSION &> /dev/null
 fi
 
-export PATH="$SWIFT_DIR/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04/usr/bin:$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
+export PATH="$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
 
 cd $BUILD_DIR
 echo "-----> Building Package"
@@ -47,7 +55,8 @@ swift build --configuration release
 # These should be statically linked, seems a swift bug
 echo "-----> Copying dynamic libraries"
 mkdir -p $BUILD_DIR/.swift-lib
-cp $SWIFT_DIR/swift-$SWIFT_VERSION/swift-$SWIFT_VERSION-ubuntu14.04/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
+SWIFT_PREFIX="$(swiftenv prefix)"
+cp $SWIFT_PREFIX/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
 
 echo "-----> Copying binaries to 'bin'"
 mkdir -p $BUILD_DIR/.swift-bin

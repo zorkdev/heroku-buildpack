@@ -38,6 +38,8 @@ if ! [ -d "$SWIFT_PREFIX" ]; then
   VERSION="$(env DONT_CHECK=true swiftenv version-name)"
   echo "-----> Installing $VERSION"
   swiftenv install
+else
+  swiftenv rehash
 fi
 
 if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then

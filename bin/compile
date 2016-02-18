@@ -16,6 +16,7 @@ CLANG_VERSION=3.7.0
 mkdir -p "$CACHE_DIR"
 
 # Fetch swiftenv
+unset GIT_DIR
 git submodule update --init --recursive >/dev/null
 
 # Activate swiftenv

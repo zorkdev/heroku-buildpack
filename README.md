@@ -1,6 +1,6 @@
 # Heroku buildpack: swift
 
-This is a Heroku buildpack for Swift app, powered by SPM (Swift Package Manager).
+This is a Heroku buildpack for Swift app, powered by SwiftPM (Swift Package Manager).
 
 Check out the [Curassow-example-helloworld](https://github.com/kylef/Curassow-example-helloworld)
 for a fully working example that can be deployed to Heroku.
@@ -35,7 +35,7 @@ the root.
 ### Procfile
 
 Using the Procfile, you can set the process to run for your web server. Any
-binaries built from your Swift source using SPM will be placed in your $PATH.
+binaries built from your Swift source using SwiftPM will be placed in your $PATH.
 
 ```swift
 web: HelloWorld --workers 3 --bind 0.0.0.0:$PORT

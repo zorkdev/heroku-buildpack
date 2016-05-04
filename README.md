@@ -17,7 +17,7 @@ $ heroku create --buildpack https://github.com/kylef/heroku-buildpack-swift.git
 
 $ git push heroku master
 remote: -----> Swift app detected
-remote: -----> Installing swift-2.2-SNAPSHOT-2015-12-01-b
+remote: -----> Installing Swift DEVELOPMENT-SNAPSHOT-2016-04-12-a
 remote: -----> Installing clang-3.7.0
 remote: -----> Building Package
 remote: -----> Copying binaries to 'bin'

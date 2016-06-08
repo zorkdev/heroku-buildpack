@@ -32,9 +32,6 @@ if ! [ -f "$BUILD_DIR/.swift-version" ] && [ -z "$SWIFT_VERSION" ]; then
   export SWIFT_VERSION="$DEFAULT_SWIFT_VERSION"
 fi
 
-# Pre compile hook
-source "$BIN_DIR/steps/hooks/pre_compile"
-
 # Install Swift
 cd "$BUILD_DIR"
 SWIFT_PREFIX="$(swiftenv prefix || true)"
@@ -54,6 +51,9 @@ if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
 fi
 
 export PATH="$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
+
+# Pre compile hook
+source "$BIN_DIR/steps/hooks/pre_compile"
 
 cd $BUILD_DIR
 echo "-----> Building Package"

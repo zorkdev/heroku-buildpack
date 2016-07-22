@@ -19,64 +19,17 @@ fi
 
 mkdir -p "$CACHE_DIR"
 
-# Fetch swiftenv
-unset GIT_DIR
-git submodule update --init --recursive >/dev/null
-
-# Activate swiftenv
-export SWIFTENV_ROOT="$CACHE_DIR/swiftenv"
-export PATH="$ROOT_DIR/swiftenv/bin:$PATH"
-eval "$(swiftenv init -)"
-
-if ! [ -f "$BUILD_DIR/.swift-version" ] && [ -z "$SWIFT_VERSION" ]; then
-  export SWIFT_VERSION="$DEFAULT_SWIFT_VERSION"
-fi
-
-# Install Swift
-cd "$BUILD_DIR"
-SWIFT_PREFIX="$(swiftenv prefix || true)"
-if ! [ -d "$SWIFT_PREFIX" ]; then
-  VERSION="$(env DONT_CHECK=true swiftenv version-name)"
-  echo "-----> Installing $VERSION"
-  swiftenv install
-else
-  swiftenv rehash
-fi
-
-if [[ ! -d "$CACHE_DIR/clang-$CLANG_VERSION" ]]; then
-  cd $CACHE_DIR
-  echo "-----> Installing clang-$CLANG_VERSION"
-  mkdir -p "clang-$CLANG_VERSION"
-  curl http://llvm.org/releases/$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04.tar.xz -s | xz -d -c | tar x -C clang-$CLANG_VERSION &> /dev/null
-fi
-
-export PATH="$CACHE_DIR/clang-$CLANG_VERSION/clang+llvm-$CLANG_VERSION-x86_64-linux-gnu-ubuntu-14.04/bin:$PATH"
-
-# Pre compile hook
-cd $BUILD_DIR
+source "$BIN_DIR/utils"
+source "$BIN_DIR/steps/swiftenv"
+source "$BIN_DIR/steps/swift"
+source "$BIN_DIR/steps/clang"
 source "$BIN_DIR/steps/hooks/pre_compile"
-
-cd $BUILD_DIR
-echo "-----> Building Package"
-swift build --configuration "$SWIFT_BUILD_CONFIGURATION"
-
-# These should be statically linked, seems a swift bug
-echo "-----> Copying dynamic libraries"
-mkdir -p $BUILD_DIR/.swift-lib
-SWIFT_PREFIX="$(swiftenv prefix)"
-cp $SWIFT_PREFIX/usr/lib/swift/linux/*.so $BUILD_DIR/.swift-lib
-find $BUILD_DIR/.build/$SWIFT_BUILD_CONFIGURATION -name '*.so' -type f -exec cp {} $BUILD_DIR/.swift-lib \;
-
-echo "-----> Copying binaries to 'bin'"
-mkdir -p $BUILD_DIR/.swift-bin
-find $BUILD_DIR/.build/$SWIFT_BUILD_CONFIGURATION ! -name '*.so' -type f -perm /a+x -exec cp {} $BUILD_DIR/.swift-bin \;
+source "$BIN_DIR/steps/swift-build"
+source "$BIN_DIR/steps/swift-install"
 
 # Setup application environment
-PROFILE_PATH="$BUILD_DIR/.profile.d/swift.sh"
 mkdir -p $BUILD_DIR/.profile.d
-set-env() {
-  echo "export $1=$2" >> $PROFILE_PATH
-}
+
 set-env PATH '$HOME/.swift-bin:$PATH'
 set-env LD_LIBRARY_PATH '$HOME/.swift-lib'
 

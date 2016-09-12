@@ -1,3 +1,5 @@
 cd $BUILD_DIR
 puts-step "Building Package"
-swift build --configuration "$SWIFT_BUILD_CONFIGURATION"
+
+curl -sL toolbox.vapor.sh | bash
+vapor build --release

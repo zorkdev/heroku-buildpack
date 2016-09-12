@@ -17,5 +17,5 @@ mv .build/release/Executable ../vapor;
 cd ..;
 rm -rf vapor-toolbox;
 
-puts-step "Building Package"
-./vapor build --release
+puts-step "Building Package ... this will take ~5-10 minutes"
+./vapor build --release -Xswiftc -DNOANIMATION

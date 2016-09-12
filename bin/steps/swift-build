@@ -10,7 +10,7 @@ TOOLBOXTAG=$(git describe --tags);
 git checkout $TOOLBOXTAG > /dev/null 2>&1;
 
 echo "Compiling...";
-swift build > /dev/null;
+swift build -Xswiftc -DNO_ANIMATION > /dev/null;
 
 echo "Installing...";
 mv .build/debug/Executable ../vapor;
@@ -18,4 +18,4 @@ cd ..;
 rm -rf vapor-toolbox;
 
 puts-step "Building Package ... this will take ~5-10 minutes"
-./vapor build --release -Xswiftc -DNOANIMATION
+./vapor build --release

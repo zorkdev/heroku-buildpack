@@ -10,10 +10,10 @@ TOOLBOXTAG=$(git describe --tags);
 git checkout $TOOLBOXTAG > /dev/null 2>&1;
 
 echo "Compiling...";
-swift build -c release > /dev/null;
+swift build > /dev/null;
 
 echo "Installing...";
-mv .build/release/Executable ../vapor;
+mv .build/debug/Executable ../vapor;
 cd ..;
 rm -rf vapor-toolbox;
 

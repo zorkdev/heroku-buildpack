@@ -17,5 +17,8 @@ mv .build/debug/Executable ../vapor;
 cd ..;
 rm -rf vapor-toolbox;
 
-puts-step "Building Package ... this will take ~5-10 minutes"
+puts-step "Fetching Packages ... this will take a while"
+swift package fetch
+
+puts-step "Building Package ... this will take a while"
 ./vapor build --release

@@ -1,5 +1,7 @@
 cd $BUILD_DIR
-puts-step "Building Package"
 
+puts-step "Installing toolbox"
 curl -sL toolbox.vapor.sh | bash
+
+puts-step "Building Package"
 vapor build --release

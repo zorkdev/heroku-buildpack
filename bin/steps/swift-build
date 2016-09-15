@@ -8,6 +8,7 @@ cd vapor-toolbox;
 
 TOOLBOXTAG=$(git describe --tags);
 git checkout $TOOLBOXTAG > /dev/null 2>&1;
+rm -rf .swift-version
 
 echo "Compiling...";
 swift build -Xswiftc -DNO_ANIMATION > /dev/null;

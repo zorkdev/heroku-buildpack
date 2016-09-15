@@ -4,12 +4,16 @@ cd "$BUILD_DIR"
 echo "Swift 3 Heroku Installer";
 
 # Determine version
-VERSION_FILE=".swift-version"
-if [ ! -f $VERSION ];
+VERSION="3.0"
+if [ -f "$BUILD_DIR/.swift-version" ]
 then
-    VERSION_FILE="3.0"
+    VERSION_FILE=".swift-version"
+    VERSION=`cat $VERSION_FILE | tr -d '[[:space:]]'`
+elif ! [ -z "$SWIFT_VERSION" ]
+then
+    VERSION="$SWIFT_VERSION"
 fi
-VERSION=`cat $VERSION_FILE | tr -d '[[:space:]]'`
+
 echo "🔢  Version: $VERSION";
 
 # Determine OS

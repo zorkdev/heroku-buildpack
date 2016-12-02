@@ -57,3 +57,13 @@ The `.swift-version` file is completely compatible with
 
 **NOTE**: *Since there are frequent Swift language changes, it's advised that
 you pin to your Swift version.*
+
+### Hooks
+
+You can place custom scripts to be ran before and after compiling your Swift
+source code inside the following files in your repository:
+
+- `bin/pre_compile`
+- `bin/post_compile`
+
+This is useful if you would need to install any other dependencies.

@@ -22,4 +22,4 @@ puts-step "Fetching Packages ... this will take a while"
 swift package fetch
 
 puts-step "Building Package ... this will take a while"
-./vapor build $SWIFT_BUILD_FLAGS --configuration "$SWIFT_BUILD_CONFIGURATION" --verbose
+./vapor build $SWIFT_BUILD_FLAGS --configuration $SWIFT_BUILD_CONFIGURATION --verbose

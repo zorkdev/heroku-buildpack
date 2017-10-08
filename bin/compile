@@ -26,6 +26,7 @@ fi
 
 mkdir -p "$CACHE_DIR"
 
+source "/etc/lsb-release"
 source "$BIN_DIR/utils"
 source "$BIN_DIR/steps/clang"
 source "$BIN_DIR/steps/swiftenv"

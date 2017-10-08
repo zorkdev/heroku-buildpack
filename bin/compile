@@ -24,7 +24,7 @@ if [ -f "$ENV_DIR/SWIFT_BUILD_FLAGS" ]; then
   SWIFT_BUILD_FLAGS=`cat "$ENV_DIR/SWIFT_BUILD_FLAGS"`
 fi
 
-mkdir -p "$CACHE_DIR"
+mkdir -p "$CACHE_DIR/$STACK"
 
 source "/etc/lsb-release"
 source "$BIN_DIR/utils"

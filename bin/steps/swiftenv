@@ -4,7 +4,7 @@ unset GIT_DIR
 git submodule update --init --recursive >/dev/null
 
 # Activate swiftenv
-export SWIFTENV_ROOT="$CACHE_DIR/swiftenv"
+export SWIFTENV_ROOT="$CACHE_DIR/$STACK/swiftenv"
 export PATH="$ROOT_DIR/swiftenv/bin:$PATH"
 eval "$(swiftenv init -)"
 

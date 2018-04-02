@@ -39,13 +39,13 @@ be placed in your $PATH.
 
 Example Procfile for Vapor 2 apps:
 
-```swift
+```
 web: Run --env=production --port=$PORT
 ```
 
 Example Procfile for Vapor 3 apps (Swift 4.1 required):
 
-```swift
+```
 web: Run serve --env production --hostname 0.0.0.0 --port $PORT
 ```
 

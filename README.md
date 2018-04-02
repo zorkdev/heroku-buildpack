@@ -43,6 +43,12 @@ Example Procfile for Vapor 2 apps:
 web: Run --env=production --port=$PORT
 ```
 
+Example Procfile for Vapor 3 apps (Swift 4.1 required):
+
+```swift
+web: Run serve --env production --hostname 0.0.0.0 --port $PORT
+```
+
 ### Specify a Swift version
 
 You can also customise the version of Swift used with a `.swift-version` file
@@ -50,7 +56,7 @@ in your repository:
 
 ```shell
 $ cat .swift-version
-3.1.1
+4.1
 ```
 
 The `.swift-version` file is completely compatible with

@@ -1,6 +1,6 @@
 # Used from https://github.com/IBM-Swift/swift-buildpack/blob/master/bin/compile.sh
 if [ -f $BUILD_DIR/.ssh/config ]; then
-    puts-step "Add SSH keys to known hosts"
+    puts-step "Adding SSH keys"
     mkdir -p ~/.ssh
     touch ~/.ssh/known_hosts
     cp $BUILD_DIR/.ssh/* ~/.ssh

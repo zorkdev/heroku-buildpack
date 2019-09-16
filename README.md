@@ -14,7 +14,7 @@ $ heroku create --buildpack vapor/vapor
 
 $ git push heroku master
 remote: -----> Swift app detected
-remote: -----> Installing clang 5.0.0
+remote: -----> Installing clang 7.0.1
 remote: -----> Installing swiftenv
 remote: -----> Installing Swift 4.2.4
 remote: -----> Building package (release configuration)
@@ -54,7 +54,7 @@ web: Run serve --env production --hostname 0.0.0.0 --port $PORT
 The buildpack defaults to Swift 4.2.4 to maintain compatibility with Swift 3 projects. If you want to use the latest and greatest, or need a specific version – including snapshots, create a file called `.swift-version` in the root of the project folder with the desired version number inside. 
 
 ```shell
-$ echo '5.0.1' > .swift-version
+$ echo '5.0.3' > .swift-version
 ```
 
 The `.swift-version` file is completely compatible with

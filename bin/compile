@@ -39,6 +39,8 @@ mkdir -p $BUILD_DIR/.profile.d
 set-env PATH '$HOME/.swift-bin:$PATH'
 set-env LD_LIBRARY_PATH '$LD_LIBRARY_PATH:$HOME/.swift-lib'
 
+echo $BUILD_TYPE
+
 source "$BIN_DIR/steps/hooks/pre_compile"
 source "$BIN_DIR/steps/ssh"
 source "$BIN_DIR/steps/swift-build"

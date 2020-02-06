@@ -23,6 +23,9 @@ fi
 if [ -f "$ENV_DIR/SWIFT_BUILD_FLAGS" ]; then
   SWIFT_BUILD_FLAGS=`cat "$ENV_DIR/SWIFT_BUILD_FLAGS"`
 fi
+if [ -f "$ENV_DIR/BUILD_TYPE" ]; then
+  BUILD_TYPE=`cat "$ENV_DIR/BUILD_TYPE"`
+fi
 
 mkdir -p "$CACHE_DIR/$STACK"
 
@@ -32,18 +35,15 @@ source "$BIN_DIR/steps/clang"
 source "$BIN_DIR/steps/swiftenv"
 
 cd $BUILD_DIR
+source "$BIN_DIR/steps/hooks/pre_compile"
+source "$BIN_DIR/steps/ssh"
+source "$BIN_DIR/steps/swift-build"
+source "$BIN_DIR/steps/swift-install"
 
 # Setup application environment
 mkdir -p $BUILD_DIR/.profile.d
 
 set-env PATH '$HOME/.swift-bin:$PATH'
 set-env LD_LIBRARY_PATH '$LD_LIBRARY_PATH:$HOME/.swift-lib'
-
-echo $BUILD_TYPE
-
-source "$BIN_DIR/steps/hooks/pre_compile"
-source "$BIN_DIR/steps/ssh"
-source "$BIN_DIR/steps/swift-build"
-source "$BIN_DIR/steps/swift-install"
 
 source "$BIN_DIR/steps/hooks/post_compile"

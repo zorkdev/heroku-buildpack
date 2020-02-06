@@ -24,7 +24,7 @@ if [ -f "$ENV_DIR/SWIFT_BUILD_FLAGS" ]; then
   SWIFT_BUILD_FLAGS=`cat "$ENV_DIR/SWIFT_BUILD_FLAGS"`
 fi
 if [ -f "$ENV_DIR/BUILD_TYPE" ]; then
-  BUILD_TYPE=`cat "$ENV_DIR/BUILD_TYPE"`
+  export BUILD_TYPE=`cat "$ENV_DIR/BUILD_TYPE"`
 fi
 
 mkdir -p "$CACHE_DIR/$STACK"

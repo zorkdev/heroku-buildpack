@@ -26,6 +26,15 @@ fi
 if [ -f "$ENV_DIR/BUILD_TYPE" ]; then
   export BUILD_TYPE=`cat "$ENV_DIR/BUILD_TYPE"`
 fi
+if [ -f "$ENV_DIR/KOGNITA_CORE" ]; then
+  export KOGNITA_CORE=`cat "$ENV_DIR/KOGNITA_CORE"`
+fi
+if [ -f "$ENV_DIR/KOGNITA_API" ]; then
+  export KOGNITA_API=`cat "$ENV_DIR/KOGNITA_API"`
+fi
+if [ -f "$ENV_DIR/KOGNITA_PAGES" ]; then
+  export KOGNITA_PAGES=`cat "$ENV_DIR/KOGNITA_PAGES"`
+fi
 
 mkdir -p "$CACHE_DIR/$STACK"
 

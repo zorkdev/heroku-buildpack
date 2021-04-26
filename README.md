@@ -114,13 +114,49 @@ $ git push heroku master
 
 ### Hooks
 
-You can place custom scripts to be ran before and after compiling your Swift
+You can place custom scripts to be run before and after compiling your Swift
 source code inside the following files in your repository:
 
 - `bin/pre_compile`
 - `bin/post_compile`
 
-This is useful if you would need to install any other dependencies.
+This is useful if you would need to customize the final image.
+
+#### Example: using private dependencies
+
+For larger projects with private dependencies, using [heroku-buildpack-github-netrc](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-github-netrc) is a solid solution – as long as the dependencies are on GitHub.
+
+The same idea – using .netrc to pass in credentials – works for GitLab and other providers just as well.
+
+The following `pre_compile` script creates a .netrc file from configuration variables.
+Save the script as `bin/pre_compile` in the root of your project.
+
+    # Load private git credentials from the app configuration
+    GIT_PRIVATE_DOMAIN=`cat $ENV_DIR/GIT_PRIVATE_DOMAIN | tr -d '[[:space:]]'`
+    GIT_PRIVATE_USER=`cat $ENV_DIR/GIT_PRIVATE_USER | tr -d '[[:space:]]'`
+    GIT_PRIVATE_PASSWORD=`cat $ENV_DIR/GIT_PRIVATE_PASSWORD | tr -d '[[:space:]]'`
+    
+    # Create .netrc file with credentials
+    echo "machine $GIT_PRIVATE_DOMAIN" >> "$HOME/.netrc"
+    echo "login $GIT_PRIVATE_USER" >> "$HOME/.netrc"
+    echo "password $GIT_PRIVATE_PASSWORD" >> "$HOME/.netrc"
+    
+    # Create cleanup script so the dyno does not see these values at runtime
+    mkdir -p "$BUILD_DIR/.profile.d"
+    echo "unset GIT_PRIVATE_DOMAIN" >> "$BUILD_DIR/.profile.d/netrc.sh"
+    echo "unset GIT_PRIVATE_USER" >> "$BUILD_DIR/.profile.d/netrc.sh"
+    echo "unset GIT_PRIVATE_PASSWORD" >> "$BUILD_DIR/.profile.d/netrc.sh"
+
+Then define the GIT_PRIVATE_DOMAIN, GIT_PRIVATE_USER and GIT_PRIVATE_PASSWORD configuration variables on the Heroku dashboard,
+or via the `heroku config:set` command.
+
+See the following example for the latter:
+
+    heroku config:set GIT_PRIVATE_DOMAIN=gitlab.com \
+      GIT_PRIVATE_USER=user@organization.com \
+      GIT_PRIVATE_PASSWORD=As1D2f34
+
+Then commit and deploy the project again.
 
 ## Using the latest source code
 

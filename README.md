@@ -14,10 +14,10 @@ $ heroku create --buildpack vapor/vapor
 
 $ git push heroku master
 remote: -----> Swift app detected
-remote: -----> Using Swift 5.3.3 (default)
-remote: -----> Using built-in clang (Swift 5.3.3)
+remote: -----> Using Swift 5.4 (default)
+remote: -----> Using built-in clang (Swift 5.4)
 remote: -----> Installing swiftenv
-remote: -----> Installing Swift 5.3.3
+remote: -----> Installing Swift 5.4
 ...
 ```
 
@@ -50,22 +50,22 @@ web: Run --env=production --port=$PORT
 
 ### Specify a Swift version
 
-The buildpack defaults to Swift 5.3.3 which will be updated when new Swift versions are released.
+The buildpack defaults to Swift 5.4 which will be updated when new Swift versions are released.
 
 If you need to use a specific version of the Swift toolchain, including older versions – for example Swift 4.2.x to retain compatibility with Swift 3 projects, you can pin that version number using a file called `.swift-version` in the root of the project folder, or by setting a `SWIFT_VERSION` configuration variable on Heroku, then deploying again. 
 
 ```shell
-$ echo '5.1.5' > .swift-version
+$ echo '5.3.3' > .swift-version
 $ git add .swift-version
-$ git commit -m "Pin Swift version to 5.1.5"
+$ git commit -m "Pin Swift version to 5.3.3"
 $ git push heroku master
 ```
 
 Or:
 
 ```shell
-$ heroku config:set SWIFT_VERSION=5.1.5
-$ git commit -m "Pin Swift version to 5.1.5" --allow-empty
+$ heroku config:set SWIFT_VERSION=5.3.3
+$ git commit -m "Pin Swift version to 5.3.3" --allow-empty
 $ git push heroku master
 ```
 
@@ -86,22 +86,21 @@ remote: -----> Building package (debug configuration)
 
 ### Other build arguments
 
-If you want to pass extra flags to the `swift build` command, you can do so by setting the `SWIFT_BUILD_FLAGS` config variable. The most common use of this feature is to enable _test discovery_. 
+If you want to pass extra flags to the `swift build` command, you can do so by setting the `SWIFT_BUILD_FLAGS` config variable. The most common use of this feature is to enable _test discovery_ for older versions of Swift.
 
-#### Test discovery
+#### Test discovery (Swift 5.3.3 and below)
 
-At the time of writing, while the buildpack does not run tests, having a test manifest or enabling test discovery is mandatory if your project has a test target.
+> Swift 5.4 runs test discovery by default, making this section finally obsolete.
 
-Without either of those, your deployment will fail with an obscure error, such as:
+Previously, projects with a test target needed either a LinuxMain.swift file, or a build flag that enables test discovery, to build successfully on Linux. Lacking them, the build would fail with an error message like below:
 
     remote: error: missing LinuxMain.swift file in the Tests directory
     remote:  !     Push rejected, failed to compile Swift app.
     remote: 
     remote:  !     Push failed
 
-> This is painfully common with the Vapor 4 template projects.
 
-The easy and low-maintenance solution is passing the `--enable-test-discovery` build flag via Heroku configuration and attempting to deploy again.
+The easy and low-maintenance solution was passing the `--enable-test-discovery` build flag via Heroku configuration and attempting to deploy again.
 
 The following example demonstrates this:
 
@@ -115,13 +114,49 @@ $ git push heroku master
 
 ### Hooks
 
-You can place custom scripts to be ran before and after compiling your Swift
+You can place custom scripts to be run before and after compiling your Swift
 source code inside the following files in your repository:
 
 - `bin/pre_compile`
 - `bin/post_compile`
 
-This is useful if you would need to install any other dependencies.
+This is useful if you would need to customize the final image.
+
+#### Example: using private dependencies
+
+For larger projects with private dependencies, using [heroku-buildpack-github-netrc](https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-github-netrc) is a solid solution – as long as the dependencies are on GitHub.
+
+The same idea – using .netrc to pass in credentials – works for GitLab and other providers just as well.
+
+The following `pre_compile` script creates a .netrc file from configuration variables.
+Save the script as `bin/pre_compile` in the root of your project.
+
+    # Load private git credentials from the app configuration
+    GIT_PRIVATE_DOMAIN=`cat $ENV_DIR/GIT_PRIVATE_DOMAIN | tr -d '[[:space:]]'`
+    GIT_PRIVATE_USER=`cat $ENV_DIR/GIT_PRIVATE_USER | tr -d '[[:space:]]'`
+    GIT_PRIVATE_PASSWORD=`cat $ENV_DIR/GIT_PRIVATE_PASSWORD | tr -d '[[:space:]]'`
+    
+    # Create .netrc file with credentials
+    echo "machine $GIT_PRIVATE_DOMAIN" >> "$HOME/.netrc"
+    echo "login $GIT_PRIVATE_USER" >> "$HOME/.netrc"
+    echo "password $GIT_PRIVATE_PASSWORD" >> "$HOME/.netrc"
+    
+    # Create cleanup script so the dyno does not see these values at runtime
+    mkdir -p "$BUILD_DIR/.profile.d"
+    echo "unset GIT_PRIVATE_DOMAIN" >> "$BUILD_DIR/.profile.d/netrc.sh"
+    echo "unset GIT_PRIVATE_USER" >> "$BUILD_DIR/.profile.d/netrc.sh"
+    echo "unset GIT_PRIVATE_PASSWORD" >> "$BUILD_DIR/.profile.d/netrc.sh"
+
+Then define the GIT_PRIVATE_DOMAIN, GIT_PRIVATE_USER and GIT_PRIVATE_PASSWORD configuration variables on the Heroku dashboard,
+or via the `heroku config:set` command.
+
+See the following example for the latter:
+
+    heroku config:set GIT_PRIVATE_DOMAIN=gitlab.com \
+      GIT_PRIVATE_USER=user@organization.com \
+      GIT_PRIVATE_PASSWORD=As1D2f34
+
+Then commit and deploy the project again.
 
 ## Using the latest source code
 

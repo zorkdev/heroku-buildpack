@@ -14,10 +14,10 @@ $ heroku create --buildpack vapor/vapor
 
 $ git push heroku master
 remote: -----> Swift app detected
-remote: -----> Using Swift 5.4 (default)
-remote: -----> Using built-in clang (Swift 5.4)
+remote: -----> Using Swift 5.4.1 (default)
+remote: -----> Using built-in clang (Swift 5.4.1)
 remote: -----> Installing swiftenv
-remote: -----> Installing Swift 5.4
+remote: -----> Installing Swift 5.4.1
 ...
 ```
 
@@ -50,7 +50,7 @@ web: Run --env=production --port=$PORT
 
 ### Specify a Swift version
 
-The buildpack defaults to Swift 5.4 which will be updated when new Swift versions are released.
+The buildpack defaults to Swift 5.4.1 and will be updated when new Swift versions are released.
 
 If you need to use a specific version of the Swift toolchain, including older versions – for example Swift 4.2.x to retain compatibility with Swift 3 projects, you can pin that version number using a file called `.swift-version` in the root of the project folder, or by setting a `SWIFT_VERSION` configuration variable on Heroku, then deploying again. 
 
@@ -90,7 +90,7 @@ If you want to pass extra flags to the `swift build` command, you can do so by s
 
 #### Test discovery (Swift 5.3.3 and below)
 
-> Swift 5.4 runs test discovery by default, making this section finally obsolete.
+> Swift 5.4+ runs test discovery by default, making this section finally obsolete.
 
 Previously, projects with a test target needed either a LinuxMain.swift file, or a build flag that enables test discovery, to build successfully on Linux. Lacking them, the build would fail with an error message like below:
 
